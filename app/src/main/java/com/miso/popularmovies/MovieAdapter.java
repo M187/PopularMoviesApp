@@ -5,11 +5,15 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
+import android.widget.ImageView;
 
 import java.util.List;
 
 /**
  * Created by Miso on 7.8.2016.
+ *
+ * Class to process movie list.
+ * Returns initialized imageViews for relevant GridView.
  */
 public class MovieAdapter extends ArrayAdapter<Movie> {
 
@@ -20,11 +24,10 @@ public class MovieAdapter extends ArrayAdapter<Movie> {
     @Override
     public View getView(int position, View convertView, ViewGroup parent){
         Movie movie = getItem(position);
-        View movieImageView = LayoutInflater.from(getContext()).inflate(R.layout.movie_tile, parent, false);
+        ImageView movieImageView = (ImageView) LayoutInflater.from(getContext()).inflate(R.layout.movie_tile, parent, false);
 
-        //todo: set actual values here from entry in List.
-
-
+        movieImageView.setImageResource(R.drawable.debug);
+        //todo: set actual values here from entry in the List.
 
         return movieImageView;
     }

@@ -24,6 +24,14 @@ public class MainActivity extends ActionBarActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.movie_list);
 
+        movies.add(new Movie(""));
+        movies.add(new Movie(""));
+        movies.add(new Movie(""));
+        movies.add(new Movie(""));
+        movies.add(new Movie(""));
+        movies.add(new Movie(""));
+
+
         movieAdapter = new MovieAdapter(this, movies);
         GridView movieGrid = (GridView) findViewById(R.id.movieGrid);
         movieGrid.setAdapter(movieAdapter);

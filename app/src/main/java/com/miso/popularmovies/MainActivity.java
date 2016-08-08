@@ -2,13 +2,12 @@ package com.miso.popularmovies;
 
 import android.os.Bundle;
 import android.support.v7.app.ActionBarActivity;
-import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
-import android.view.ViewGroup;
-import android.widget.GridLayout;
+import android.widget.AdapterView;
 import android.widget.GridView;
+import android.widget.Toast;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -35,6 +34,16 @@ public class MainActivity extends ActionBarActivity {
         movieAdapter = new MovieAdapter(this, movies);
         GridView movieGrid = (GridView) findViewById(R.id.movieGrid);
         movieGrid.setAdapter(movieAdapter);
+
+        movieGrid.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> parent, View view,
+                                    int position, long id) {
+                Toast.makeText(getApplicationContext(),
+                        "Click ListItem Number " + position, Toast.LENGTH_LONG)
+                        .show();
+            }
+        });
     }
 
     @Override

@@ -7,6 +7,9 @@ import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
 import android.widget.ImageView;
 
+import com.miso.popularmovies.json.Movie;
+import com.squareup.picasso.Picasso;
+
 import java.util.List;
 
 /**
@@ -16,6 +19,8 @@ import java.util.List;
  * Returns initialized imageViews for relevant GridView.
  */
 public class MovieAdapter extends ArrayAdapter<Movie> {
+
+    private String size = "w92";
 
     public MovieAdapter(Activity context, List<Movie> movieList){
         super(context, 0, R.id.movieGrid, movieList);
@@ -28,6 +33,7 @@ public class MovieAdapter extends ArrayAdapter<Movie> {
 
         movieImageView.setImageResource(R.drawable.debug);
         //todo: set actual values here from entry in the List.
+        Picasso.with(this.getContext()).load("http://image.tmdb.org/t/p/" + size + "/" + movie.posterPath).into(movieImageView);
 
         return movieImageView;
     }

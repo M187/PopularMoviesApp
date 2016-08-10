@@ -1,4 +1,7 @@
 <resources>
     <string name="app_name">PopularMovies</string>
     <string name="action_settings">Settings</string>
+
+    <string name="MoviedbApiCode"></string>
+
 </resources>

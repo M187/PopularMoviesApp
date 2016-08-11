@@ -1,6 +1,5 @@
 package com.miso.popularmovies;
 
-import android.app.Activity;
 import android.os.Bundle;
 import android.support.v7.app.ActionBarActivity;
 import android.view.Menu;
@@ -25,6 +24,10 @@ public class MainActivity extends ActionBarActivity {
 
     public volatile List<Movie> movies = new ArrayList<>();
 
+    public synchronized void setMovies(List<Movie> movies){
+        this.movies = movies;
+    }
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -33,12 +36,11 @@ public class MainActivity extends ActionBarActivity {
         setContentView(loadingScreen);
         moviesdbApiKey = getBaseContext().getString(R.string.MoviedbApiCode);
 
-        fetchMeMovieData();
+        fetchMeMoviesData(true);
     }
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
-        // Inflate the menu; this adds items to the action bar if it is present.
         getMenuInflater().inflate(R.menu.menu_main, menu);
         return true;
     }
@@ -48,17 +50,23 @@ public class MainActivity extends ActionBarActivity {
         // Handle action bar item clicks here. The action bar will
         // automatically handle clicks on the Home/Up button, so long
         // as you specify a parent activity in AndroidManifest.xml.
-        int id = item.getItemId();
-
-        //noinspection SimplifiableIfStatement
-        if (id == R.id.action_settings) {
-            return true;
+        switch (item.getItemId()){
+            case R.id.action_top_rated:
+                fetchMeMoviesData(true);
+                return true;
+            case R.id.action_most_popular:
+                fetchMeMoviesData(false);
+                return true;
+            default:
+                return super.onOptionsItemSelected(item);
         }
-
-        return super.onOptionsItemSelected(item);
     }
 
-    private void fetchMeMovieData(){
+    /**
+     * Create and starts thread to fetch movie data.
+     * Calls URL to fetch response from movieDb server and parse it into Movie ArrayList.
+     */
+    private void fetchMeMoviesData(boolean isPopular){
 
         new Thread(){
 
@@ -91,24 +99,25 @@ public class MainActivity extends ActionBarActivity {
                         movieAdapter = new MovieAdapter(myActivity, movies);
                         GridView movieGrid = (GridView) findViewById(R.id.movieGrid);
                         movieGrid.setAdapter(movieAdapter);
-
-                        movieGrid.setOnItemClickListener(new AdapterView.OnItemClickListener() {
-                            @Override
-                            public void onItemClick(AdapterView<?> parent, View view,
-                                                    int position, long id) {
-                                Toast.makeText(getApplicationContext(),
-                                        "Click ListItem Number " + position, Toast.LENGTH_LONG)
-                                        .show();
-                            }
-                        });
+                        movieGrid.setOnItemClickListener(createDefaultListViewClickListener());
                     }
                 });
-
             }
-        }.init(this, true).start();
+
+        }.init(this, isPopular).start();
     }
 
-    public synchronized void setMovies(List<Movie> movies){
-        this.movies = movies;
+    /**
+     * @return default OnItemClickListener for our ListView
+     */
+    private AdapterView.OnItemClickListener createDefaultListViewClickListener(){
+        return (new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> parent, View view,
+                                    int position, long id) {
+                Toast.makeText(getApplicationContext(),
+                        "Click ListItem Number " + position, Toast.LENGTH_LONG).show();
+            }
+        });
     }
 }

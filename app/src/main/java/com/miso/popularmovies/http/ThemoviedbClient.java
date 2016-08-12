@@ -46,6 +46,7 @@ import java.util.List;
  */
 public abstract class ThemoviedbClient {
 
+    //<editor-fold @desc="Stuff related to obtaining Lists of movies.">
     public static List<Movie> getTopRatedMovies() {
         try {
             URL url = new URL("http://api.themoviedb.org/3/movie/top_rated?api_key=" + MainActivity.moviesdbApiKey);
@@ -90,6 +91,7 @@ public abstract class ThemoviedbClient {
                 return null;
             }
 
+            Log.d("Http",buffer.toString());
             return buffer.toString();
         } catch (Exception e) {
             return null;
@@ -119,4 +121,5 @@ public abstract class ThemoviedbClient {
         }
         return returnList;
     }
+    //</editor-fold>
 }

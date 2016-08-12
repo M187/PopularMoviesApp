@@ -1,6 +1,7 @@
 package com.miso.popularmovies;
 
 import android.app.Activity;
+import android.content.Context;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -20,10 +21,12 @@ import java.util.List;
  */
 public class MovieAdapter extends ArrayAdapter<Movie> {
 
+    public Context context;
     private String size = "w92";
 
     public MovieAdapter(Activity context, List<Movie> movieList){
         super(context, 0, R.id.movieGrid, movieList);
+        this.context = context;
     }
 
     @Override
@@ -31,7 +34,7 @@ public class MovieAdapter extends ArrayAdapter<Movie> {
         Movie movie = getItem(position);
         ImageView movieImageView = (ImageView) LayoutInflater.from(getContext()).inflate(R.layout.movie_tile, parent, false);
 
-        movieImageView.setImageResource(R.drawable.debug);
+        //movieImageView.setImageResource(R.drawable.debug);
         //todo: set actual values here from entry in the List.
         Picasso.with(this.getContext()).load("http://image.tmdb.org/t/p/" + size + "/" + movie.posterPath).into(movieImageView);
 

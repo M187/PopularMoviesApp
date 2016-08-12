@@ -1,14 +1,15 @@
 package com.miso.popularmovies;
 
+import android.net.Uri;
 import android.os.Bundle;
 import android.support.v7.app.ActionBarActivity;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.GridView;
 import android.widget.ImageView;
-import android.widget.Toast;
 
 import com.miso.popularmovies.http.ThemoviedbClient;
 import com.miso.popularmovies.json.Movie;
@@ -16,7 +17,7 @@ import com.miso.popularmovies.json.Movie;
 import java.util.ArrayList;
 import java.util.List;
 
-public class MainActivity extends ActionBarActivity {
+public class MainActivity extends ActionBarActivity implements MovieFragment.OnMovieDetailsFragmentInteractionListener {
 
     public static volatile String moviesdbApiKey = null;
 
@@ -31,9 +32,9 @@ public class MainActivity extends ActionBarActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        ImageView loadingScreen = new ImageView(getBaseContext());
-        loadingScreen.setImageDrawable(this.getResources().getDrawable(R.drawable.loading));
-        setContentView(loadingScreen);
+        //ImageView loadingScreen = new ImageView(getBaseContext());
+        //loadingScreen.setImageDrawable(this.getResources().getDrawable(R.drawable.loading));
+        setContentView(R.layout.loading_layout);
         moviesdbApiKey = getBaseContext().getString(R.string.MoviedbApiCode);
 
         fetchMeMoviesData(true);
@@ -41,6 +42,7 @@ public class MainActivity extends ActionBarActivity {
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
+        super.onCreateOptionsMenu(menu);
         getMenuInflater().inflate(R.menu.menu_main, menu);
         return true;
     }
@@ -52,9 +54,11 @@ public class MainActivity extends ActionBarActivity {
         // as you specify a parent activity in AndroidManifest.xml.
         switch (item.getItemId()){
             case R.id.action_top_rated:
+                setContentView(R.layout.loading_layout);
                 fetchMeMoviesData(true);
                 return true;
             case R.id.action_most_popular:
+                setContentView(R.layout.loading_layout);
                 fetchMeMoviesData(false);
                 return true;
             default:
@@ -92,6 +96,10 @@ public class MainActivity extends ActionBarActivity {
                 this.myActivity.setMovies(
                         (isPopular) ? ThemoviedbClient.getMostPopularMovies() : ThemoviedbClient.getTopRatedMovies());
 
+                if (myActivity.movies==null){
+                    myActivity.movies = new ArrayList<>();
+                }
+
                 this.myActivity.runOnUiThread(new Runnable() {
                     @Override
                     public void run() {
@@ -115,9 +123,33 @@ public class MainActivity extends ActionBarActivity {
             @Override
             public void onItemClick(AdapterView<?> parent, View view,
                                     int position, long id) {
-                Toast.makeText(getApplicationContext(),
-                        "Click ListItem Number " + position, Toast.LENGTH_LONG).show();
+
+                Movie selectedMovie = (Movie)parent.getAdapter().getItem(position);
+
+                MovieFragment frag = MovieFragment.newInstance(selectedMovie);
+
+                getFragmentManager()
+                        .beginTransaction()
+                        .replace(R.id.main, frag, "movieDetailFragment")
+                        .addToBackStack(null)
+                        .commit();
+
+                Log.d("fragmentCreation", "Click ListItem Number " + position);
             }
         });
+    }
+
+    @Override
+    public void onMovieDetailsFragmentInteraction(Uri uri) {
+        this.onBackPressed();
+    }
+
+    @Override
+    public void onBackPressed() {
+        if(getFragmentManager().getBackStackEntryCount() != 0) {
+            getFragmentManager().popBackStack();
+        } else {
+            super.onBackPressed();
+        }
     }
 }

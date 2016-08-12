@@ -25,7 +25,12 @@ public class Movie {
     public boolean video;
     public String voteAverage;
 
+    private String jsonString;
+
     public Movie(JSONObject jsonMovieRepresentation) throws JSONException{
+
+        this.jsonString = jsonMovieRepresentation.toString();
+
         this.posterPath = jsonMovieRepresentation.getString("poster_path");
         this.id = jsonMovieRepresentation.getString("id");
         this.adult = jsonMovieRepresentation.getBoolean("adult");
@@ -41,5 +46,9 @@ public class Movie {
         this.voteCount = jsonMovieRepresentation.getString("vote_count");
         this.video = jsonMovieRepresentation.getBoolean("video");
         this.voteAverage = jsonMovieRepresentation.getString("vote_average");
+    }
+    
+    public String getJsonRepresentation(){
+        return jsonString;
     }
 }

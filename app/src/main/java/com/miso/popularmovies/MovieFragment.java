@@ -5,72 +5,78 @@ import android.net.Uri;
 import android.os.Bundle;
 import android.app.Fragment;
 import android.view.LayoutInflater;
+import android.view.Menu;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageView;
+import android.widget.LinearLayout;
+import android.widget.TextView;
+
+import com.miso.popularmovies.json.Movie;
+import com.squareup.picasso.Picasso;
+
+import org.json.JSONException;
+import org.json.JSONObject;
 
 
 /**
  * A simple {@link Fragment} subclass.
  * Activities that contain this fragment must implement the
- * {@link MovieFragment.OnFragmentInteractionListener} interface
+ * {@link OnMovieDetailsFragmentInteractionListener} interface
  * to handle interaction events.
  * Use the {@link MovieFragment#newInstance} factory method to
  * create an instance of this fragment.
  */
 public class MovieFragment extends Fragment {
-    // TODO: Rename parameter arguments, choose names that match
-    // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
-    private static final String ARG_PARAM1 = "param1";
-    private static final String ARG_PARAM2 = "param2";
 
-    // TODO: Rename and change types of parameters
-    private String mParam1;
-    private String mParam2;
+    private static final String SELECETD_MOVIE = "selectedMovie";
 
-    private OnFragmentInteractionListener mListener;
+    private Movie selectedMovie;
+
+    private OnMovieDetailsFragmentInteractionListener mListener;
 
     /**
      * Use this factory method to create a new instance of
      * this fragment using the provided parameters.
      *
-     * @param param1 Parameter 1.
-     * @param param2 Parameter 2.
+     * @param selectedMovie in ?onClickMethod
      * @return A new instance of fragment MovieFragment.
      */
-    // TODO: Rename and change types and number of parameters
-    public static MovieFragment newInstance(String param1, String param2) {
+    public static MovieFragment newInstance(Movie selectedMovie) {
         MovieFragment fragment = new MovieFragment();
         Bundle args = new Bundle();
-        args.putString(ARG_PARAM1, param1);
-        args.putString(ARG_PARAM2, param2);
+        args.putString(SELECETD_MOVIE, selectedMovie.getJsonRepresentation());
         fragment.setArguments(args);
         return fragment;
     }
 
-    public MovieFragment() {
-        // Required empty public constructor
-    }
+    public MovieFragment() {}
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         if (getArguments() != null) {
-            mParam1 = getArguments().getString(ARG_PARAM1);
-            mParam2 = getArguments().getString(ARG_PARAM2);
+            try {
+                this.selectedMovie = new Movie(new JSONObject(getArguments().getString(SELECETD_MOVIE)));
+            } catch (JSONException e){
+                //todo: null is bad!!
+                this.selectedMovie = null;
+            }
         }
     }
 
     @Override
-    public View onCreateView(LayoutInflater inflater, ViewGroup container,
-                             Bundle savedInstanceState) {
-        // Inflate the layout for this fragment
-        return inflater.inflate(R.layout.fragment_movie, container, false);
+    public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
+        LinearLayout view = (LinearLayout) inflater.inflate(R.layout.movie_details, container, false);
+        //((TextView)view.findViewById(R.id.movieDetails)).setText(selectedMovie.getJsonRepresentation());
+        setMovieData(view);
+        return view;
     }
 
     // TODO: Rename method, update argument and hook method into UI event
     public void onButtonPressed(Uri uri) {
         if (mListener != null) {
-            mListener.onFragmentInteraction(uri);
+            mListener.onMovieDetailsFragmentInteraction(uri);
         }
     }
 
@@ -78,10 +84,10 @@ public class MovieFragment extends Fragment {
     public void onAttach(Activity activity) {
         super.onAttach(activity);
         try {
-            mListener = (OnFragmentInteractionListener) activity;
+            mListener = (OnMovieDetailsFragmentInteractionListener) activity;
         } catch (ClassCastException e) {
             throw new ClassCastException(activity.toString()
-                    + " must implement OnFragmentInteractionListener");
+                    + " must implement OnMovieDetailsFragmentInteractionListener");
         }
     }
 
@@ -90,6 +96,12 @@ public class MovieFragment extends Fragment {
         super.onDetach();
         mListener = null;
     }
+
+    @Override
+    public void onPrepareOptionsMenu(Menu menu){
+        menu.setGroupVisible(R.menu.menu_main, false);
+    }
+
 
     /**
      * This interface must be implemented by activities that contain this
@@ -101,9 +113,18 @@ public class MovieFragment extends Fragment {
      * "http://developer.android.com/training/basics/fragments/communicating.html"
      * >Communicating with Other Fragments</a> for more information.
      */
-    public interface OnFragmentInteractionListener {
+    public interface OnMovieDetailsFragmentInteractionListener {
         // TODO: Update argument type and name
-        public void onFragmentInteraction(Uri uri);
+        public void onMovieDetailsFragmentInteraction(Uri uri);
     }
 
+    private void setMovieData(View view){
+
+        ((TextView)view.findViewById(R.id.movieTitle)).setText(selectedMovie.title);
+        ((TextView)view.findViewById(R.id.movieReleaseDate)).setText(selectedMovie.releaseDate);
+        ((TextView)view.findViewById(R.id.movieVoteAverage)).setText(selectedMovie.voteAverage);
+        ((TextView)view.findViewById(R.id.moviePlotSynopsis)).setText(selectedMovie.overview);
+
+        Picasso.with(this.getActivity().getBaseContext()).load("http://image.tmdb.org/t/p/" + "w342" + "/" + selectedMovie.posterPath).into(((ImageView)view.findViewById(R.id.moviePoster)));
+    }
 }

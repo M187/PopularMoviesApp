@@ -6,6 +6,8 @@ import android.os.Bundle;
 import android.app.Fragment;
 import android.view.LayoutInflater;
 import android.view.Menu;
+import android.view.MenuInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
@@ -34,6 +36,7 @@ public class MovieFragment extends Fragment {
     private Movie selectedMovie;
 
     private OnMovieDetailsFragmentInteractionListener mListener;
+    private LayoutInflater inflater;
 
     /**
      * Use this factory method to create a new instance of
@@ -69,6 +72,7 @@ public class MovieFragment extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         LinearLayout view = (LinearLayout) inflater.inflate(R.layout.movie_details, container, false);
         //((TextView)view.findViewById(R.id.movieDetails)).setText(selectedMovie.getJsonRepresentation());
+        setHasOptionsMenu(true);
         setMovieData(view);
         return view;
     }
@@ -98,8 +102,15 @@ public class MovieFragment extends Fragment {
     }
 
     @Override
-    public void onPrepareOptionsMenu(Menu menu){
-        menu.setGroupVisible(R.menu.menu_main, false);
+    public void onCreateOptionsMenu(Menu menu, MenuInflater inflater){
+        super.onCreateOptionsMenu(menu, inflater);
+        menu.clear();
+        inflater.inflate(R.menu.menu_movie_details, menu);
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item){
+        return true;
     }
 
 

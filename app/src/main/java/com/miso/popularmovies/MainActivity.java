@@ -14,6 +14,7 @@ import android.widget.ImageView;
 import com.miso.popularmovies.http.ThemoviedbClient;
 import com.miso.popularmovies.json.Movie;
 
+import java.sql.Time;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -96,7 +97,8 @@ public class MainActivity extends ActionBarActivity implements MovieFragment.OnM
                 this.myActivity.setMovies(
                         (isPopular) ? ThemoviedbClient.getMostPopularMovies() : ThemoviedbClient.getTopRatedMovies());
 
-                if (myActivity.movies==null){
+                Timeout t = new Timeout();
+                if (myActivity.movies==null & t.timedOut()){
                     myActivity.movies = new ArrayList<>();
                 }
 

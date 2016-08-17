@@ -23,6 +23,12 @@ public class MovieAdapter extends ArrayAdapter<Movie> {
 
     public Context context;
     private String size = "w92";
+    private ViewHolder mHolder = new ViewHolder();
+
+    private static class ViewHolder{
+        //todo: substitue this with RecycleView
+        ImageView imageView;
+    }
 
     public MovieAdapter(Activity context, List<Movie> movieList){
         super(context, 0, R.id.movieGrid, movieList);
@@ -32,12 +38,13 @@ public class MovieAdapter extends ArrayAdapter<Movie> {
     @Override
     public View getView(int position, View convertView, ViewGroup parent){
         Movie movie = getItem(position);
-        ImageView movieImageView = (ImageView) LayoutInflater.from(getContext()).inflate(R.layout.movie_tile, parent, false);
-
-        //movieImageView.setImageResource(R.drawable.debug);
-        //todo: set actual values here from entry in the List.
-        Picasso.with(this.getContext()).load("http://image.tmdb.org/t/p/" + size + "/" + movie.posterPath).into(movieImageView);
-
+        ImageView movieImageView;
+        if (mHolder.imageView == null) {
+            movieImageView = (ImageView) LayoutInflater.from(getContext()).inflate(R.layout.movie_tile, parent, false);
+        } else {
+            movieImageView = mHolder.imageView;
+        }
+        Picasso.with(this.getContext()).load("http://image.tmdb.org/t/p/" + size + "/" + movie.posterPath).placeholder(R.drawable.debug).error(R.drawable.debug).into(movieImageView);
         return movieImageView;
     }
 }

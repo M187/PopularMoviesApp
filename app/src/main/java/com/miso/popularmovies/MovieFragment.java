@@ -11,7 +11,7 @@ import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
-import android.widget.LinearLayout;
+import android.widget.ScrollView;
 import android.widget.TextView;
 
 import com.miso.popularmovies.json.Movie;
@@ -34,9 +34,14 @@ public class MovieFragment extends Fragment {
     private static final String SELECETD_MOVIE = "selectedMovie";
 
     private Movie selectedMovie;
+    private ViewHolder mHolder = new ViewHolder();
 
     private OnMovieDetailsFragmentInteractionListener mListener;
     private LayoutInflater inflater;
+
+    private static class ViewHolder{
+        ScrollView scrollView;
+    }
 
     /**
      * Use this factory method to create a new instance of
@@ -70,8 +75,12 @@ public class MovieFragment extends Fragment {
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-        LinearLayout view = (LinearLayout) inflater.inflate(R.layout.movie_details, container, false);
-        //((TextView)view.findViewById(R.id.movieDetails)).setText(selectedMovie.getJsonRepresentation());
+        ScrollView view;
+        if (mHolder.scrollView == null) {
+            view = (ScrollView) inflater.inflate(R.layout.movie_details, container, false);
+        } else {
+            view = mHolder.scrollView;
+        }
         setHasOptionsMenu(true);
         setMovieData(view);
         return view;

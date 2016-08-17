@@ -9,12 +9,10 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.GridView;
-import android.widget.ImageView;
 
 import com.miso.popularmovies.http.ThemoviedbClient;
 import com.miso.popularmovies.json.Movie;
 
-import java.sql.Time;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -22,7 +20,7 @@ public class MainActivity extends ActionBarActivity implements MovieFragment.OnM
 
     public static volatile String moviesdbApiKey = null;
 
-    MovieAdapter movieAdapter;
+    MovieAdapter mMovieAdapter;
 
     public volatile List<Movie> movies = new ArrayList<>();
 
@@ -106,9 +104,9 @@ public class MainActivity extends ActionBarActivity implements MovieFragment.OnM
                     @Override
                     public void run() {
                         setContentView(R.layout.movie_list);
-                        movieAdapter = new MovieAdapter(myActivity, movies);
+                        mMovieAdapter = new MovieAdapter(myActivity, movies);
                         GridView movieGrid = (GridView) findViewById(R.id.movieGrid);
-                        movieGrid.setAdapter(movieAdapter);
+                        movieGrid.setAdapter(mMovieAdapter);
                         movieGrid.setOnItemClickListener(createDefaultListViewClickListener());
                     }
                 });

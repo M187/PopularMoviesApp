@@ -7,7 +7,6 @@ import android.app.Fragment;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
-import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
@@ -37,7 +36,6 @@ public class MovieFragment extends Fragment {
     private ViewHolder mHolder = new ViewHolder();
 
     private OnMovieDetailsFragmentInteractionListener mListener;
-    private LayoutInflater inflater;
 
     private static class ViewHolder{
         ScrollView scrollView;
@@ -67,7 +65,6 @@ public class MovieFragment extends Fragment {
             try {
                 this.selectedMovie = new Movie(new JSONObject(getArguments().getString(SELECETD_MOVIE)));
             } catch (JSONException e){
-                //todo: null is bad!!
                 this.selectedMovie = null;
             }
         }
@@ -115,11 +112,6 @@ public class MovieFragment extends Fragment {
         super.onCreateOptionsMenu(menu, inflater);
         menu.clear();
         inflater.inflate(R.menu.menu_movie_details, menu);
-    }
-
-    @Override
-    public boolean onOptionsItemSelected(MenuItem item){
-        return true;
     }
 
 

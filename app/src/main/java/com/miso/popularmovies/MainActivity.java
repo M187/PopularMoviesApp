@@ -9,8 +9,14 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.GridView;
+import android.widget.Toast;
 
-import com.miso.popularmovies.http.ThemoviedbClient;
+import com.android.volley.Request;
+import com.android.volley.Response;
+import com.android.volley.VolleyError;
+import com.android.volley.toolbox.JsonObjectRequest;
+import com.miso.popularmovies.http.AppRequestQueue;
+import com.miso.popularmovies.http.FetchMoviesDataResponseListener;
 import com.miso.popularmovies.json.Movie;
 
 import java.util.ArrayList;
@@ -18,24 +24,27 @@ import java.util.List;
 
 public class MainActivity extends ActionBarActivity implements MovieFragment.OnMovieDetailsFragmentInteractionListener {
 
-    public static volatile String moviesdbApiKey = null;
+    public static volatile String moviesdbApiKey;
 
-    MovieAdapter mMovieAdapter;
-
-    public volatile List<Movie> movies = new ArrayList<>();
+    private MovieAdapter mMovieAdapter;
+    private FetchMoviesDataResponseListener mListener;
+    private volatile List<Movie> movies = new ArrayList<>();
 
     public synchronized void setMovies(List<Movie> movies){
-        this.movies = movies;
+        this.movies.clear();
+        this.movies.addAll(movies);
     }
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        //ImageView loadingScreen = new ImageView(getBaseContext());
-        //loadingScreen.setImageDrawable(this.getResources().getDrawable(R.drawable.loading));
-        setContentView(R.layout.loading_layout);
-        moviesdbApiKey = getBaseContext().getString(R.string.MoviedbApiCode);
-
+        moviesdbApiKey = this.getResources().getString(R.string.MoviedbApiCode);
+        setContentView(R.layout.movie_list);
+        this.mMovieAdapter = new MovieAdapter(this, movies);
+        GridView movieGrid = (GridView) findViewById(R.id.movieGrid);
+        movieGrid.setAdapter(this.mMovieAdapter);
+        movieGrid.setOnItemClickListener(createDefaultListViewClickListener());
+        this.mListener = new FetchMoviesDataResponseListener(this.mMovieAdapter, this.movies);
         fetchMeMoviesData(true);
     }
 
@@ -53,11 +62,11 @@ public class MainActivity extends ActionBarActivity implements MovieFragment.OnM
         // as you specify a parent activity in AndroidManifest.xml.
         switch (item.getItemId()){
             case R.id.action_top_rated:
-                setContentView(R.layout.loading_layout);
+                //etContentView(R.layout.loading_layout);
                 fetchMeMoviesData(true);
                 return true;
             case R.id.action_most_popular:
-                setContentView(R.layout.loading_layout);
+                //setContentView(R.layout.loading_layout);
                 fetchMeMoviesData(false);
                 return true;
             default:
@@ -66,53 +75,33 @@ public class MainActivity extends ActionBarActivity implements MovieFragment.OnM
     }
 
     /**
-     * Create and starts thread to fetch movie data.
+     * Add jsonRequest to fetch movies data into RequestQueue instance.
      * Calls URL to fetch response from movieDb server and parse it into Movie ArrayList.
+     * Then it resets the movies array and refresh adapter.
      */
     private void fetchMeMoviesData(boolean isPopular){
-
-        new Thread(){
-
-            private boolean isPopular = false;
-            private MainActivity myActivity;
-
-            /**
-             * Just to initialize this thread.
-             *
-             * @param myActivity reference to List to store movies into
-             * @param isPopular should we fetch popular or topRated?
-             * @return this Thread to be started.
-             */
-            public Thread init(MainActivity myActivity, boolean isPopular){
-                this.isPopular = isPopular;
-                this.myActivity = myActivity;
-                return this;
-            }
-
-            @Override
-            public void run(){
-
-                this.myActivity.setMovies(
-                        (isPopular) ? ThemoviedbClient.getMostPopularMovies() : ThemoviedbClient.getTopRatedMovies());
-
-                Timeout t = new Timeout();
-                if (myActivity.movies==null & t.timedOut()){
-                    myActivity.movies = new ArrayList<>();
-                }
-
-                this.myActivity.runOnUiThread(new Runnable() {
+        String url;
+        if (isPopular){
+            url = "http://api.themoviedb.org/3/movie/popular?api_key=" + MainActivity.moviesdbApiKey;
+        } else {
+            url = "http://api.themoviedb.org/3/movie/top_rated?api_key=" + MainActivity.moviesdbApiKey;
+        }
+        JsonObjectRequest fetchMoviesDataReq = new JsonObjectRequest(
+                Request.Method.GET,
+                url,
+                null,
+                this.mListener,
+                new Response.ErrorListener() {
                     @Override
-                    public void run() {
-                        setContentView(R.layout.movie_list);
-                        mMovieAdapter = new MovieAdapter(myActivity, movies);
-                        GridView movieGrid = (GridView) findViewById(R.id.movieGrid);
-                        movieGrid.setAdapter(mMovieAdapter);
-                        movieGrid.setOnItemClickListener(createDefaultListViewClickListener());
+                    public void onErrorResponse(VolleyError error) {
+                        Toast.makeText(getBaseContext(), "Error during fetching data!", Toast.LENGTH_LONG).show();
+                        Log.d("Response:", error.networkResponse.toString());
+                        Log.d("ToastError:", error.toString());
                     }
-                });
-            }
+                }
+        );
 
-        }.init(this, isPopular).start();
+        AppRequestQueue.getInstance(this).addToRequestQueue(fetchMoviesDataReq);
     }
 
     /**

@@ -30,7 +30,7 @@ public class MainActivity extends ActionBarActivity implements MovieFragment.OnM
     private FetchMoviesDataResponseListener mListener;
     private volatile List<Movie> movies = new ArrayList<>();
 
-    public synchronized void setMovies(List<Movie> movies){
+    public synchronized void setMovies(List<Movie> movies) {
         this.movies.clear();
         this.movies.addAll(movies);
     }
@@ -60,7 +60,7 @@ public class MainActivity extends ActionBarActivity implements MovieFragment.OnM
         // Handle action bar item clicks here. The action bar will
         // automatically handle clicks on the Home/Up button, so long
         // as you specify a parent activity in AndroidManifest.xml.
-        switch (item.getItemId()){
+        switch (item.getItemId()) {
             case R.id.action_top_rated:
                 //etContentView(R.layout.loading_layout);
                 fetchMeMoviesData(true);
@@ -79,41 +79,40 @@ public class MainActivity extends ActionBarActivity implements MovieFragment.OnM
      * Calls URL to fetch response from movieDb server and parse it into Movie ArrayList.
      * Then it resets the movies array and refresh adapter.
      */
-    private void fetchMeMoviesData(boolean isPopular){
+    private void fetchMeMoviesData(boolean isPopular) {
         String url;
-        if (isPopular){
+        if (isPopular) {
             url = "http://api.themoviedb.org/3/movie/popular?api_key=" + MainActivity.moviesdbApiKey;
         } else {
             url = "http://api.themoviedb.org/3/movie/top_rated?api_key=" + MainActivity.moviesdbApiKey;
         }
-        JsonObjectRequest fetchMoviesDataReq = new JsonObjectRequest(
-                Request.Method.GET,
-                url,
-                null,
-                this.mListener,
-                new Response.ErrorListener() {
-                    @Override
-                    public void onErrorResponse(VolleyError error) {
-                        Toast.makeText(getBaseContext(), "Error during fetching data!", Toast.LENGTH_LONG).show();
-                        Log.d("Response:", error.networkResponse.toString());
-                        Log.d("ToastError:", error.toString());
-                    }
-                }
-        );
+        AppRequestQueue.getInstance(this).addToRequestQueue(
+                new JsonObjectRequest(
+                        Request.Method.GET,
+                        url,
+                        null,
+                        this.mListener,
+                        new Response.ErrorListener() {
+                            @Override
+                            public void onErrorResponse(VolleyError error) {
+                                Toast.makeText(getBaseContext(), "Error during fetching data!", Toast.LENGTH_LONG).show();
+                                Log.d("ToastError:", error.toString());
+                            }
+                        }
+                ));
 
-        AppRequestQueue.getInstance(this).addToRequestQueue(fetchMoviesDataReq);
     }
 
     /**
      * @return default OnItemClickListener for our ListView
      */
-    private AdapterView.OnItemClickListener createDefaultListViewClickListener(){
+    private AdapterView.OnItemClickListener createDefaultListViewClickListener() {
         return (new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view,
                                     int position, long id) {
 
-                Movie selectedMovie = (Movie)parent.getAdapter().getItem(position);
+                Movie selectedMovie = (Movie) parent.getAdapter().getItem(position);
 
                 MovieFragment frag = MovieFragment.newInstance(selectedMovie);
 
@@ -135,7 +134,7 @@ public class MainActivity extends ActionBarActivity implements MovieFragment.OnM
 
     @Override
     public void onBackPressed() {
-        if(getFragmentManager().getBackStackEntryCount() != 0) {
+        if (getFragmentManager().getBackStackEntryCount() != 0) {
             getFragmentManager().popBackStack();
         } else {
             super.onBackPressed();

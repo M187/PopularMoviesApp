@@ -3,12 +3,12 @@ package com.miso.popularmovies;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.v7.app.ActionBarActivity;
+import android.support.v7.widget.GridLayoutManager;
+import android.support.v7.widget.RecyclerView;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
-import android.widget.AdapterView;
-import android.widget.GridView;
 import android.widget.Toast;
 
 import com.android.volley.Request;
@@ -30,20 +30,18 @@ public class MainActivity extends ActionBarActivity implements MovieFragment.OnM
     private FetchMoviesDataResponseListener mListener;
     private volatile List<Movie> movies = new ArrayList<>();
 
-    public synchronized void setMovies(List<Movie> movies) {
-        this.movies.clear();
-        this.movies.addAll(movies);
-    }
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         moviesdbApiKey = this.getResources().getString(R.string.MoviedbApiCode);
         setContentView(R.layout.movie_list);
-        this.mMovieAdapter = new MovieAdapter(this, movies);
-        GridView movieGrid = (GridView) findViewById(R.id.movieGrid);
-        movieGrid.setAdapter(this.mMovieAdapter);
-        movieGrid.setOnItemClickListener(createDefaultListViewClickListener());
+
+        this.mMovieAdapter = new MovieAdapter(movies, createMovieRecycleViewClickListener());
+        RecyclerView movieView = (RecyclerView) findViewById(R.id.movieGrid);
+        GridLayoutManager b = new GridLayoutManager(this, 2);
+        movieView.setLayoutManager(b);
+        movieView.setAdapter(this.mMovieAdapter);
+
         this.mListener = new FetchMoviesDataResponseListener(this.mMovieAdapter, this.movies);
         fetchMeMoviesData(true);
     }
@@ -104,16 +102,12 @@ public class MainActivity extends ActionBarActivity implements MovieFragment.OnM
     }
 
     /**
-     * @return default OnItemClickListener for our ListView
+     * @return default MyClickListener for our RecycleView and its MovieHolders
      */
-    private AdapterView.OnItemClickListener createDefaultListViewClickListener() {
-        return (new AdapterView.OnItemClickListener() {
-            @Override
-            public void onItemClick(AdapterView<?> parent, View view,
-                                    int position, long id) {
-
-                Movie selectedMovie = (Movie) parent.getAdapter().getItem(position);
-
+    private MovieAdapter.MyClickListener createMovieRecycleViewClickListener() {
+        return ( new MovieAdapter.MyClickListener(){
+            public void onItemClick(int position, View view) {
+                Movie selectedMovie = movies.get(position);
                 MovieFragment frag = MovieFragment.newInstance(selectedMovie);
 
                 getFragmentManager()
@@ -121,7 +115,6 @@ public class MainActivity extends ActionBarActivity implements MovieFragment.OnM
                         .replace(R.id.main, frag, "movieDetailFragment")
                         .addToBackStack(null)
                         .commit();
-
                 Log.d("fragmentCreation", "Click ListItem Number " + position);
             }
         });

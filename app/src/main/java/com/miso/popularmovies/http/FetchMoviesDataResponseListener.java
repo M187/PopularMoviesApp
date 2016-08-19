@@ -37,9 +37,7 @@ public class FetchMoviesDataResponseListener implements Response.Listener<JSONOb
         mMovieAdapter.notifyDataSetChanged();
     }
 
-
     private static ArrayList<Movie> getMovieList(JSONArray jsonArray) {
-
         ArrayList<Movie> returnList = new ArrayList<>();
         int i = 0;
         while (i < jsonArray.length()) {

@@ -4,6 +4,7 @@
     android:layout_height="wrap_content"
     android:adjustViewBounds="true"
     android:focusable="false"
+    android:id="@+id/movieTile"
     >
 
 </ImageView>

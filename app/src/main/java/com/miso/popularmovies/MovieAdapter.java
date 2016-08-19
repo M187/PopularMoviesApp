@@ -1,11 +1,9 @@
 package com.miso.popularmovies;
 
-import android.app.Activity;
-import android.content.Context;
+import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.ArrayAdapter;
 import android.widget.ImageView;
 
 import com.miso.popularmovies.json.Movie;
@@ -14,37 +12,56 @@ import com.squareup.picasso.Picasso;
 import java.util.List;
 
 /**
- * Created by Miso on 7.8.2016.
- *
- * Class to process movie list.
- * Returns initialized imageViews for relevant GridView.
+ * Created by michal.hornak on 19.08.2016.
  */
-public class MovieAdapter extends ArrayAdapter<Movie> {
+public class MovieAdapter extends RecyclerView.Adapter<MovieAdapter.MovieHolder> {
 
-    public Context context;
+    private List<Movie> movies;
     private String size = "w92";
-    private ViewHolder mHolder = new ViewHolder();
+    private static MyClickListener mClickListener;
 
-    private static class ViewHolder{
-        //todo: substitue this with RecycleView
-        ImageView imageView;
+    public interface MyClickListener {
+        void onItemClick(int position, View view);
     }
 
-    public MovieAdapter(Activity context, List<Movie> movieList){
-        super(context, 0, R.id.movieGrid, movieList);
-        this.context = context;
+    public static class MovieHolder extends RecyclerView.ViewHolder implements View.OnClickListener {
+
+        ImageView image;
+
+        public MovieHolder(View itemView) {
+            super(itemView);
+            this.image = (ImageView) itemView.findViewById(R.id.movieTile);
+            itemView.setOnClickListener(this);
+        }
+
+        @Override
+        public void onClick(View view) {
+            mClickListener.onItemClick(getPosition(), view);
+        }
+    }
+
+    public MovieAdapter(List<Movie> movies, MyClickListener clickListener) {
+        this.movies = movies;
+        this.mClickListener = clickListener;
     }
 
     @Override
-    public View getView(int position, View convertView, ViewGroup parent){
-        Movie movie = getItem(position);
-        ImageView movieImageView;
-        if (mHolder.imageView == null) {
-            movieImageView = (ImageView) LayoutInflater.from(getContext()).inflate(R.layout.movie_tile, parent, false);
-        } else {
-            movieImageView = mHolder.imageView;
-        }
-        Picasso.with(this.getContext()).load("http://image.tmdb.org/t/p/" + size + "/" + movie.posterPath).placeholder(R.drawable.debug).error(R.drawable.debug).into(movieImageView);
-        return movieImageView;
+    public MovieHolder onCreateViewHolder(ViewGroup parent, int viewType) {
+        View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.movie_tile, parent, false);
+        return new MovieHolder(view);
+    }
+
+    @Override
+    public void onBindViewHolder(MovieHolder holder, int position){
+        Picasso.with(holder.image.getContext())
+                .load("http://image.tmdb.org/t/p/" + size + "/" + movies.get(position).posterPath)
+                .placeholder(R.drawable.debug)
+                .error(R.drawable.debug)
+                .into(holder.image);
+    }
+
+    @Override
+    public int getItemCount() {
+        return movies.size();
     }
 }

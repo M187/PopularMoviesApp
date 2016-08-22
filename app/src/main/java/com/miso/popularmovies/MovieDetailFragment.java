@@ -22,10 +22,10 @@ import com.squareup.picasso.Picasso;
  * Activities that contain this fragment must implement the
  * {@link OnMovieDetailsFragmentInteractionListener} interface
  * to handle interaction events.
- * Use the {@link MovieFragment#newInstance} factory method to
+ * Use the {@link MovieDetailFragment#newInstance} factory method to
  * create an instance of this fragment.
  */
-public class MovieFragment extends Fragment {
+public class MovieDetailFragment extends Fragment {
 
     private static final String SELECETD_MOVIE = "selectedMovie";
 
@@ -43,17 +43,17 @@ public class MovieFragment extends Fragment {
      * this fragment using the provided parameters.
      *
      * @param selectedMovie in ?onClickMethod
-     * @return A new instance of fragment MovieFragment.
+     * @return A new instance of fragment MovieDetailFragment.
      */
-    public static MovieFragment newInstance(Movie selectedMovie) {
-        MovieFragment fragment = new MovieFragment();
+    public static MovieDetailFragment newInstance(Movie selectedMovie) {
+        MovieDetailFragment fragment = new MovieDetailFragment();
         Bundle args = new Bundle();
         args.putParcelable(SELECETD_MOVIE, selectedMovie);
         fragment.setArguments(args);
         return fragment;
     }
 
-    public MovieFragment() {
+    public MovieDetailFragment() {
     }
 
     @Override

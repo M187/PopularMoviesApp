@@ -7,7 +7,7 @@
     android:clickable="true"
     android:gravity="center"
     android:orientation="vertical"
-    tools:context="com.miso.popularmovies.MovieFragment">
+    tools:context="com.miso.popularmovies.MovieDetailFragment">
 
     <LinearLayout
         android:layout_width="wrap_content"

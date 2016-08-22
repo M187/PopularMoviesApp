@@ -22,7 +22,7 @@ import com.miso.popularmovies.json.Movie;
 import java.util.ArrayList;
 import java.util.List;
 
-public class MainActivity extends ActionBarActivity implements MovieFragment.OnMovieDetailsFragmentInteractionListener {
+public class MainActivity extends ActionBarActivity implements MovieDetailFragment.OnMovieDetailsFragmentInteractionListener {
 
     public static volatile String moviesdbApiKey;
 
@@ -108,7 +108,7 @@ public class MainActivity extends ActionBarActivity implements MovieFragment.OnM
         return ( new MovieAdapter.MyClickListener(){
             public void onItemClick(int position, View view) {
                 Movie selectedMovie = movies.get(position);
-                MovieFragment frag = MovieFragment.newInstance(selectedMovie);
+                MovieDetailFragment frag = MovieDetailFragment.newInstance(selectedMovie);
 
                 getFragmentManager()
                         .beginTransaction()

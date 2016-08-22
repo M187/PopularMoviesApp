@@ -16,9 +16,6 @@ import android.widget.TextView;
 import com.miso.popularmovies.json.Movie;
 import com.squareup.picasso.Picasso;
 
-import org.json.JSONException;
-import org.json.JSONObject;
-
 
 /**
  * A simple {@link Fragment} subclass.
@@ -37,7 +34,7 @@ public class MovieFragment extends Fragment {
 
     private OnMovieDetailsFragmentInteractionListener mListener;
 
-    private static class ViewHolder{
+    private static class ViewHolder {
         ScrollView scrollView;
     }
 
@@ -51,22 +48,19 @@ public class MovieFragment extends Fragment {
     public static MovieFragment newInstance(Movie selectedMovie) {
         MovieFragment fragment = new MovieFragment();
         Bundle args = new Bundle();
-        args.putString(SELECETD_MOVIE, selectedMovie.getJsonRepresentation());
+        args.putParcelable(SELECETD_MOVIE, selectedMovie);
         fragment.setArguments(args);
         return fragment;
     }
 
-    public MovieFragment() {}
+    public MovieFragment() {
+    }
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         if (getArguments() != null) {
-            try {
-                this.selectedMovie = new Movie(new JSONObject(getArguments().getString(SELECETD_MOVIE)));
-            } catch (JSONException e){
-                this.selectedMovie = null;
-            }
+            this.selectedMovie = getArguments().getParcelable(SELECETD_MOVIE);
         }
     }
 
@@ -108,7 +102,7 @@ public class MovieFragment extends Fragment {
     }
 
     @Override
-    public void onCreateOptionsMenu(Menu menu, MenuInflater inflater){
+    public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
         super.onCreateOptionsMenu(menu, inflater);
         menu.clear();
         inflater.inflate(R.menu.menu_movie_details, menu);
@@ -130,13 +124,13 @@ public class MovieFragment extends Fragment {
         public void onMovieDetailsFragmentInteraction(Uri uri);
     }
 
-    private void setMovieData(View view){
+    private void setMovieData(View view) {
 
-        ((TextView)view.findViewById(R.id.movieTitle)).setText(selectedMovie.title);
-        ((TextView)view.findViewById(R.id.movieReleaseDate)).setText(selectedMovie.releaseDate);
-        ((TextView)view.findViewById(R.id.movieVoteAverage)).setText(selectedMovie.voteAverage);
-        ((TextView)view.findViewById(R.id.moviePlotSynopsis)).setText(selectedMovie.overview);
+        ((TextView) view.findViewById(R.id.movieTitle)).setText(selectedMovie.title);
+        ((TextView) view.findViewById(R.id.movieReleaseDate)).setText(selectedMovie.releaseDate);
+        ((TextView) view.findViewById(R.id.movieVoteAverage)).setText(selectedMovie.voteAverage);
+        ((TextView) view.findViewById(R.id.moviePlotSynopsis)).setText(selectedMovie.overview);
 
-        Picasso.with(this.getActivity().getBaseContext()).load("http://image.tmdb.org/t/p/" + "w342" + "/" + selectedMovie.posterPath).into(((ImageView)view.findViewById(R.id.moviePoster)));
+        Picasso.with(this.getActivity().getBaseContext()).load("http://image.tmdb.org/t/p/" + "w342" + "/" + selectedMovie.posterPath).into(((ImageView) view.findViewById(R.id.moviePoster)));
     }
 }

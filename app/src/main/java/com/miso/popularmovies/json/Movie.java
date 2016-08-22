@@ -1,5 +1,8 @@
 package com.miso.popularmovies.json;
 
+import android.os.Parcel;
+import android.os.Parcelable;
+
 import org.json.JSONException;
 import org.json.JSONObject;
 
@@ -8,7 +11,7 @@ import org.json.JSONObject;
  *
  * Simple POJO to hold data about Movie.
  */
-public class Movie {
+public class Movie implements Parcelable {
 
     public String posterPath;
     public String id;
@@ -51,4 +54,62 @@ public class Movie {
     public String getJsonRepresentation(){
         return jsonString;
     }
+
+    @Override
+    public int describeContents() {
+        return 0;
+    }
+
+    @Override
+    public void writeToParcel(Parcel out, int flags) {
+        out.writeString(this.posterPath);
+        out.writeString(this.id);
+        out.writeString(String.valueOf(this.adult));
+        out.writeString(this.overview);
+        out.writeString(this.releaseDate);
+        //todo - genre handling
+        out.writeString(this.genreIds);
+        out.writeString(this.originalTitle);
+        out.writeString(this.originalLanguage);
+        out.writeString(this.title);
+        out.writeString(this.backdropPath);
+        out.writeString(this.popularity);
+        out.writeString(this.voteCount);
+        out.writeString(String.valueOf(this.video));
+        out.writeString(this.voteAverage);
+    }
+
+    private Movie(Parcel in){
+        posterPath = in.readString();
+        id = in.readString();
+        adult = Boolean.getBoolean(in.readString());
+        overview = in.readString();
+        releaseDate = in.readString();
+        //todo - genre handling
+        genreIds = in.readString();
+        originalTitle = in.readString();
+        originalLanguage = in.readString();
+        title = in.readString();
+        backdropPath = in.readString();
+        popularity = in.readString();
+        voteCount = in.readString();
+        video = Boolean.parseBoolean(in.readString());
+        voteAverage = in.readString();
+    }
+
+    // After implementing the `Parcelable` interface, we need to create the
+    // `Parcelable.Creator<Movie> CREATOR` constant for our class;
+    // Notice how it has our class specified as its type.
+    public static final Parcelable.Creator<Movie> CREATOR = new Parcelable.Creator<Movie>(){
+        @Override
+        public Movie createFromParcel(Parcel source) {
+            return new Movie(source);
+        }
+
+        @Override
+        public Movie[] newArray(int size) {
+            return new Movie[size];
+        }
+    };
+
 }

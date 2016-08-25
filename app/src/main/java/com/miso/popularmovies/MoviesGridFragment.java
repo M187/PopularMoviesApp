@@ -40,7 +40,7 @@ public class MoviesGridFragment extends Fragment {
 
         moviesdbApiKey = this.getResources().getString(R.string.MoviedbApiCode);
 
-        this.mMovieAdapter = new MovieAdapter(movies, createMovieRecycleViewClickListener());
+        this.mMovieAdapter = new MovieAdapter(this.movies, createMovieRecycleViewClickListener());
 
         this.mListener = new FetchMoviesDataResponseListener(this.mMovieAdapter, this.movies);
         fetchMeMoviesData(true);
@@ -48,10 +48,12 @@ public class MoviesGridFragment extends Fragment {
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedINstanceState){
-        RecyclerView moviesView = (RecyclerView) container.findViewById(R.id.movieGrid);
+        View moviesView = inflater.inflate(getResources().getLayout(R.layout.movies_list_fragment), container);
+        RecyclerView moviesRecyclerView = (RecyclerView) moviesView.findViewById(R.id.movieGrid);
         GridLayoutManager layMan = new GridLayoutManager(getActivity(), 2);
-        moviesView.setLayoutManager(layMan);
-        moviesView.setAdapter(this.mMovieAdapter);
+        moviesRecyclerView.setLayoutManager(layMan);
+        moviesRecyclerView.setAdapter(this.mMovieAdapter);
+        fetchMeMoviesData(true);
         return moviesView;
     }
 
@@ -61,15 +63,11 @@ public class MoviesGridFragment extends Fragment {
     private MovieAdapter.MyClickListener createMovieRecycleViewClickListener() {
         return ( new MovieAdapter.MyClickListener(){
             public void onItemClick(int position, View view) {
-                Movie selectedMovie = movies.get(position);
-                MovieDetailFragment frag = MovieDetailFragment.newInstance(selectedMovie);
-
-                getFragmentManager()
-                        .beginTransaction()
-                        .replace(R.id.main, frag, "movieDetailFragment")
-                        .addToBackStack(null)
-                        .commit();
-                Log.d("fragmentCreation", "Click ListItem Number " + position);
+                try {
+                    ((MainActivity) getActivity()).onMovieDetailsFragmentInteraction(movies.get(position));
+                } catch (Exception e){
+                    Log.d("MoviesDetailFragment","Wrong context for MoviesGridFragment!");
+                }
             }
         });
     }
@@ -79,7 +77,7 @@ public class MoviesGridFragment extends Fragment {
      * Calls URL to fetch response from movieDb server and parse it into Movie ArrayList.
      * Then it resets the movies array and refresh adapter.
      */
-    private void fetchMeMoviesData(boolean isPopular) {
+    public void fetchMeMoviesData(boolean isPopular) {
         String url;
         if (isPopular) {
             url = "http://api.themoviedb.org/3/movie/popular?api_key=" + MainActivity.moviesdbApiKey;
@@ -100,7 +98,6 @@ public class MoviesGridFragment extends Fragment {
                             }
                         }
                 ));
-
     }
 
 }

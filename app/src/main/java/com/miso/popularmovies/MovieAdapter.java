@@ -17,7 +17,7 @@ import java.util.List;
 public class MovieAdapter extends RecyclerView.Adapter<MovieAdapter.MovieHolder> {
 
     private List<Movie> movies;
-    private String size = "w92";
+    private String size = "w342";
     private static MyClickListener mClickListener;
 
     public interface MyClickListener {

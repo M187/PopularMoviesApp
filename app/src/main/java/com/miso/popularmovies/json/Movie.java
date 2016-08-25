@@ -28,11 +28,8 @@ public class Movie implements Parcelable {
     public boolean video;
     public String voteAverage;
 
-    private String jsonString;
 
     public Movie(JSONObject jsonMovieRepresentation) throws JSONException{
-
-        this.jsonString = jsonMovieRepresentation.toString();
 
         this.posterPath = jsonMovieRepresentation.getString("poster_path");
         this.id = jsonMovieRepresentation.getString("id");
@@ -49,10 +46,6 @@ public class Movie implements Parcelable {
         this.voteCount = jsonMovieRepresentation.getString("vote_count");
         this.video = jsonMovieRepresentation.getBoolean("video");
         this.voteAverage = jsonMovieRepresentation.getString("vote_average");
-    }
-    
-    public String getJsonRepresentation(){
-        return jsonString;
     }
 
     @Override

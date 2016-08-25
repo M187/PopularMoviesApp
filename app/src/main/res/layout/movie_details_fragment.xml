@@ -1,0 +1,64 @@
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content">
+
+    <ScrollView xmlns:tools="http://schemas.android.com/tools"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:background="#CBA"
+        android:id="@+id/movieDetailScrollView"
+        android:clickable="true"
+        android:gravity="center_horizontal"
+        android:orientation="vertical"
+        tools:context="com.miso.popularmovies.MovieDetailFragment">
+
+        <LinearLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:gravity="center_horizontal">
+
+            <TextView
+                android:id="@+id/movieTitle"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="" />
+
+            <TextView
+                android:id="@+id/movieReleaseDate"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="" />
+
+            <TextView
+                android:id="@+id/movieVoteAverage"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="" />
+
+            <TextView
+                android:id="@+id/moviePlotSynopsis"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="" />
+
+            <ImageView
+                android:id="@+id/moviePoster"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:focusable="false" />
+            <Button
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Play Trailer"
+                android:onClick="playTrailer"/>
+
+            <android.support.v7.widget.RecyclerView
+                android:id="@+id/reviewGrid"
+                android:layout_width="fill_parent"
+                android:layout_height="fill_parent"
+                android:numColumns="auto_fit"></android.support.v7.widget.RecyclerView>
+
+        </LinearLayout>
+    </ScrollView>
+</RelativeLayout>

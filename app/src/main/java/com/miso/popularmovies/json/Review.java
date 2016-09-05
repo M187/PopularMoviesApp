@@ -3,6 +3,9 @@ package com.miso.popularmovies.json;
 import android.os.Parcel;
 import android.os.Parcelable;
 
+import org.json.JSONException;
+import org.json.JSONObject;
+
 /**
  * Created by michal.hornak on 25.08.2016.
  */
@@ -11,9 +14,9 @@ public class Review implements Parcelable{
     public String userName;
     public String review;
 
-    public Review(String userName, String review){
-        this.userName = userName;
-        this.review = review;
+    public Review(JSONObject jsonReviewRepresentation) throws JSONException {
+        this.userName = jsonReviewRepresentation.getString("author");
+        this.review = jsonReviewRepresentation.getString("content");
     }
 
     @Override

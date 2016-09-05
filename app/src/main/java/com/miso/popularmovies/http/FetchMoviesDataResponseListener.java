@@ -1,5 +1,7 @@
 package com.miso.popularmovies.http;
 
+import android.util.Log;
+
 import com.android.volley.Response;
 import com.miso.popularmovies.MovieAdapter;
 import com.miso.popularmovies.json.Movie;
@@ -33,6 +35,7 @@ public class FetchMoviesDataResponseListener implements Response.Listener<JSONOb
         try {
             movies.clear();
             movies.addAll(getMovieList(response.getJSONArray("results")));
+            Log.d("API.response", response.toString());
         } catch (JSONException e) {}
         mMovieAdapter.notifyDataSetChanged();
     }

@@ -98,7 +98,7 @@ public class MovieDetailFragment extends Fragment {
 
         //Attach recyclerView here
         RecyclerView reviewsRecyclerView = (RecyclerView) view.findViewById(R.id.reviewGrid);
-        GridLayoutManager layMan = new GridLayoutManager(getActivity(), 2);
+        GridLayoutManager layMan = new GridLayoutManager(getActivity(), 1);
         reviewsRecyclerView.setLayoutManager(layMan);
         reviewsRecyclerView.setAdapter(this.mReviewAdapter);
         fetchReviewData();

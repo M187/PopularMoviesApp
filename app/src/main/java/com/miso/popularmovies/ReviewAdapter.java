@@ -8,6 +8,8 @@ import android.widget.TextView;
 
 import com.miso.popularmovies.json.Review;
 
+import org.json.JSONObject;
+
 import java.util.List;
 
 /**
@@ -17,6 +19,7 @@ public class ReviewAdapter extends RecyclerView.Adapter<ReviewAdapter.ReviewHold
 
     private View view;
     private volatile List<Review> reviews;
+
     public static class ReviewHolder extends RecyclerView.ViewHolder{
 
         TextView textViewUsername;
@@ -31,13 +34,14 @@ public class ReviewAdapter extends RecyclerView.Adapter<ReviewAdapter.ReviewHold
 
     public ReviewAdapter(List<Review> reviews){
         this.reviews = reviews;
+        try {
+            this.reviews.add(new Review(new JSONObject("{\"author\":\"a\",\"content\":\"aa\"}")));
+        } catch (Exception e){}
     }
 
     @Override
     public ReviewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
-        if (this.view == null) {
-            view = LayoutInflater.from(parent.getContext()).inflate(R.layout.movie_review, parent, false);
-        }
+        view = LayoutInflater.from(parent.getContext()).inflate(R.layout.movie_review, parent, false);
         return new ReviewHolder(view);
     }
 
@@ -46,9 +50,9 @@ public class ReviewAdapter extends RecyclerView.Adapter<ReviewAdapter.ReviewHold
         holder.textViewUsername.setText((reviews.get(position)).userName);
         holder.textViewReview.setText((reviews.get(position)).review);
     }
+
     @Override
     public int getItemCount() {
         return reviews.size();
     }
-
 }

@@ -3,6 +3,7 @@ package com.miso.popularmovies;
 import android.app.Activity;
 import android.os.Bundle;
 import android.app.Fragment;
+import android.support.v4.view.ViewCompat;
 import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
@@ -95,10 +96,12 @@ public class MovieDetailFragment extends Fragment {
         setHasOptionsMenu(true);
         setMovieData(view);
 
-
         //Attach recyclerView here
         RecyclerView reviewsRecyclerView = (RecyclerView) view.findViewById(R.id.reviewGrid);
-        GridLayoutManager layMan = new GridLayoutManager(getActivity(), 1);
+
+        ViewCompat.setNestedScrollingEnabled(reviewsRecyclerView, false);
+
+        MyLayoutManager layMan = new MyLayoutManager(getActivity());
         reviewsRecyclerView.setLayoutManager(layMan);
         reviewsRecyclerView.setAdapter(this.mReviewAdapter);
         fetchReviewData();

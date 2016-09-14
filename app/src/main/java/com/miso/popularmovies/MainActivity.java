@@ -8,7 +8,14 @@ import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.Toast;
 
+import com.android.volley.Request;
+import com.android.volley.Response;
+import com.android.volley.VolleyError;
+import com.android.volley.toolbox.JsonObjectRequest;
+import com.miso.popularmovies.http.AppRequestQueue;
+import com.miso.popularmovies.http.FetchMovieTrailerResponseListener;
 import com.miso.popularmovies.json.Movie;
 
 public class MainActivity extends ActionBarActivity implements MovieDetailFragment.OnMovieDetailsFragmentInteractionListener {
@@ -83,10 +90,22 @@ public class MainActivity extends ActionBarActivity implements MovieDetailFragme
     }
 
     public void playTrailer(View view){
-        String trailerEndpoint = "http://api.themoviedb.org/movie/{id}/videos?api_key=" + moviesdbApiKey;
-        Log.d("MainActivity", "Launching trailer!");
-        Intent intent = new Intent(Intent.ACTION_VIEW, Uri.parse(trailerEndpoint.replace("{id}", this.mSelectedMovie.id)));
-        intent.setDataAndType(Uri.parse(trailerEndpoint.replace("{id}", this.mSelectedMovie.id)), "video/*");
-        startActivity(intent);
+        FetchMovieTrailerResponseListener comentsListener = new FetchMovieTrailerResponseListener(this);
+        String url;
+        url = "http://api.themoviedb.org/3/movie/" + this.mSelectedMovie.id + "/videos?api_key=" + MainActivity.moviesdbApiKey;
+        AppRequestQueue.getInstance(this).addToRequestQueue(
+                new JsonObjectRequest(
+                        Request.Method.GET,
+                        url,
+                        null,
+                        comentsListener,
+                        new Response.ErrorListener() {
+                            @Override
+                            public void onErrorResponse(VolleyError error) {
+                            }
+                        }
+                ));
+
+
     }
 }

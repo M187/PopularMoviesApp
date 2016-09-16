@@ -4,6 +4,7 @@
 
     <string name="top_rated">Top rated movies</string>
     <string name="most_popular">Most popular movies</string>
+    <string name="my_favourites">My favourites movies</string>
 
     <string name="MoviedbApiCode">***REMOVED***</string>
 

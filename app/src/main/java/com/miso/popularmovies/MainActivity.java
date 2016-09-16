@@ -1,27 +1,27 @@
 package com.miso.popularmovies;
 
-import android.content.Intent;
-import android.net.Uri;
+import android.content.Context;
+import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.support.v7.app.ActionBarActivity;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
-import android.widget.Toast;
 
 import com.android.volley.Request;
 import com.android.volley.Response;
 import com.android.volley.VolleyError;
 import com.android.volley.toolbox.JsonObjectRequest;
 import com.miso.popularmovies.http.AppRequestQueue;
+import com.miso.popularmovies.http.FetchMovieDataResponseListener;
 import com.miso.popularmovies.http.FetchMovieTrailerResponseListener;
 import com.miso.popularmovies.json.Movie;
 
 public class MainActivity extends ActionBarActivity implements MovieDetailFragment.OnMovieDetailsFragmentInteractionListener {
 
     public static volatile String moviesdbApiKey;
-    private MoviesGridFragment mMoviesList;
+    private MoviesGridFragment mMoviesListFragment;
     private Movie mSelectedMovie;
 
     public boolean mTwoPane = false;
@@ -33,7 +33,7 @@ public class MainActivity extends ActionBarActivity implements MovieDetailFragme
         moviesdbApiKey = this.getResources().getString(R.string.MoviedbApiCode);
         setContentView(R.layout.movie_list);
         this.mTwoPane = (findViewById(R.id.movie_detail_fragment) != null) ? true : false;
-        this.mMoviesList = (MoviesGridFragment) getFragmentManager().findFragmentById(R.id.movies_fragment);
+        this.mMoviesListFragment = (MoviesGridFragment) getFragmentManager().findFragmentById(R.id.movies_fragment);
     }
 
     @Override
@@ -50,10 +50,13 @@ public class MainActivity extends ActionBarActivity implements MovieDetailFragme
         // as you specify a parent activity in AndroidManifest.xml.
         switch (item.getItemId()) {
             case R.id.action_top_rated:
-                this.mMoviesList.fetchMeMoviesData(true);
+                this.mMoviesListFragment.fetchMeMoviesData(true);
                 return true;
             case R.id.action_most_popular:
-                this.mMoviesList.fetchMeMoviesData(false);
+                this.mMoviesListFragment.fetchMeMoviesData(false);
+                return true;
+            case R.id.action_my_favourites:
+                this.getMyFavourites();
                 return true;
             default:
                 return super.onOptionsItemSelected(item);
@@ -107,5 +110,22 @@ public class MainActivity extends ActionBarActivity implements MovieDetailFragme
                 ));
 
 
+    }
+
+    public void addToFavourites(View view){
+        SharedPreferences prefs = this.getSharedPreferences("com.miso.popularmovies.MainActivity", Context.MODE_PRIVATE);
+        String currentFavourites = prefs.getString("favourites", "");
+        if (!currentFavourites.contains(this.mSelectedMovie.id)){
+            currentFavourites += ",,," + this.mSelectedMovie.id;
+            prefs.edit().putString("favourites", currentFavourites).apply();
+        }
+    }
+
+    private void getMyFavourites(){
+        SharedPreferences prefs = this.getSharedPreferences("com.miso.popularmovies.MainActivity", Context.MODE_PRIVATE);
+        String currentFavourites = prefs.getString("favourites", "");
+        String[] mFavouriteMovies = currentFavourites.split(",,,");
+
+        this.mMoviesListFragment.fetchMyFavouritesMoviesData(mFavouriteMovies);
     }
 }

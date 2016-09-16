@@ -37,7 +37,7 @@ public class Movie implements Parcelable {
         this.overview = jsonMovieRepresentation.getString("overview");
         this.releaseDate = jsonMovieRepresentation.getString("release_date");
         //todo - genre handling
-        this.genreIds = jsonMovieRepresentation.getString("genre_ids");
+        //this.genreIds = jsonMovieRepresentation.getString("genre_ids");
         this.originalTitle = jsonMovieRepresentation.getString("original_title");
         this.originalLanguage = jsonMovieRepresentation.getString("original_language");
         this.title = jsonMovieRepresentation.getString("title");

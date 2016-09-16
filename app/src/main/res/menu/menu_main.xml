@@ -7,4 +7,7 @@
 
     <item android:id="@+id/action_most_popular" android:title="@string/most_popular"
         android:orderInCategory="100" app:showAsAction="never" />
+
+    <item android:id="@+id/action_my_favourites" android:title="@string/my_favourites"
+        android:orderInCategory="100" app:showAsAction="never" />
 </menu>

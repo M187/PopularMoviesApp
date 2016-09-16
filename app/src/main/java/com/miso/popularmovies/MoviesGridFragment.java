@@ -15,6 +15,7 @@ import com.android.volley.Response;
 import com.android.volley.VolleyError;
 import com.android.volley.toolbox.JsonObjectRequest;
 import com.miso.popularmovies.http.AppRequestQueue;
+import com.miso.popularmovies.http.FetchMovieDataResponseListener;
 import com.miso.popularmovies.http.FetchMoviesDataResponseListener;
 import com.miso.popularmovies.json.Movie;
 
@@ -35,7 +36,7 @@ public class MoviesGridFragment extends Fragment {
     //public MoviesGridFragment(){}
 
     @Override
-    public void onCreate(Bundle savedInstanceState){
+    public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
         moviesdbApiKey = this.getResources().getString(R.string.MoviedbApiCode);
@@ -47,7 +48,7 @@ public class MoviesGridFragment extends Fragment {
     }
 
     @Override
-    public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedINstanceState){
+    public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedINstanceState) {
         View moviesView = inflater.inflate(getResources().getLayout(R.layout.movies_list_fragment), container);
         RecyclerView moviesRecyclerView = (RecyclerView) moviesView.findViewById(R.id.movieGrid);
         GridLayoutManager layMan = new GridLayoutManager(getActivity(), 2);
@@ -61,12 +62,12 @@ public class MoviesGridFragment extends Fragment {
      * @return default MyClickListener for our RecycleView and its MovieHolders
      */
     private MovieAdapter.MyClickListener createMovieRecycleViewClickListener() {
-        return ( new MovieAdapter.MyClickListener(){
+        return (new MovieAdapter.MyClickListener() {
             public void onItemClick(int position, View view) {
                 try {
                     ((MainActivity) getActivity()).onMovieDetailsFragmentInteraction(movies.get(position));
-                } catch (Exception e){
-                    Log.d("MoviesDetailFragment","Wrong context for MoviesGridFragment!");
+                } catch (Exception e) {
+                    Log.d("MoviesDetailFragment", "Wrong context for MoviesGridFragment!");
                 }
             }
         });
@@ -100,4 +101,30 @@ public class MoviesGridFragment extends Fragment {
                 ));
     }
 
+    public void fetchMyFavouritesMoviesData(String[] idList) {
+        this.movies.clear();
+
+        FetchMovieDataResponseListener mListener = new FetchMovieDataResponseListener(this.mMovieAdapter, this.movies);
+
+        for (String id : idList) {
+            if (!(id.equals(""))) {
+                String url;
+                url = "http://api.themoviedb.org/3/movie/" + id + "?api_key=" + MainActivity.moviesdbApiKey;
+                AppRequestQueue.getInstance(getActivity()).addToRequestQueue(
+                        new JsonObjectRequest(
+                                Request.Method.GET,
+                                url,
+                                null,
+                                mListener,
+                                new Response.ErrorListener() {
+                                    @Override
+                                    public void onErrorResponse(VolleyError error) {
+                                        Toast.makeText(getActivity(), "Error during fetching data!", Toast.LENGTH_LONG).show();
+                                        Log.d("ToastError:", error.toString());
+                                    }
+                                }
+                        ));
+            }
+        }
+    }
 }

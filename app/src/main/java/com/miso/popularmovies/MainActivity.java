@@ -24,7 +24,7 @@ public class MainActivity extends ActionBarActivity implements MovieDetailFragme
     private MoviesGridFragment mMoviesListFragment;
     private Movie mSelectedMovie;
 
-    public boolean mTwoPane = false;
+    public static boolean mTwoPane = false;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {

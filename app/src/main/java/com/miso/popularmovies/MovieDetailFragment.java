@@ -13,6 +13,7 @@ import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
@@ -43,6 +44,7 @@ import java.util.List;
 public class MovieDetailFragment extends Fragment {
 
     private static final String SELECETD_MOVIE = "selectedMovie";
+    public static boolean selectedFavourite = false;
 
     private Movie selectedMovie;
     private ViewHolder mHolder = new ViewHolder();
@@ -93,6 +95,12 @@ public class MovieDetailFragment extends Fragment {
         } else {
             view = mHolder.scrollView;
         }
+
+        //Set 'favourite' button correct text
+        if (selectedFavourite) {
+            this.addToFavouriteButtonTriggered(view);
+        }
+
         setHasOptionsMenu(true);
         setMovieData(view);
 
@@ -105,7 +113,6 @@ public class MovieDetailFragment extends Fragment {
         reviewsRecyclerView.setLayoutManager(layMan);
         reviewsRecyclerView.setAdapter(this.mReviewAdapter);
         fetchReviewData();
-
 
         return view;
     }
@@ -190,5 +197,13 @@ public class MovieDetailFragment extends Fragment {
                             }
                         }
                 ));
+    }
+
+    public void addToFavouriteButtonTriggered(View view){
+        ((Button)view.findViewById(R.id.add_to_favourites)).setText("Remove from favourites");
+    }
+
+    public void removeToFavouriteButtonTriggered(View view){
+        ((Button)view.findViewById(R.id.add_to_favourites)).setText("Add to favourites");
     }
 }

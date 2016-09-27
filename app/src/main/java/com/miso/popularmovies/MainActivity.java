@@ -22,6 +22,7 @@ public class MainActivity extends ActionBarActivity implements MovieDetailFragme
 
     public static volatile String moviesdbApiKey;
     private MoviesGridFragment mMoviesListFragment;
+    private MovieDetailFragment mMovieDetailFrag = MovieDetailFragment.newInstance(null);
     private Movie mSelectedMovie;
 
     public static boolean mTwoPane = false;
@@ -75,17 +76,21 @@ public class MainActivity extends ActionBarActivity implements MovieDetailFragme
     @Override
     public void onMovieDetailsFragmentInteraction(Movie movie) {
         this.mSelectedMovie = movie;
-        MovieDetailFragment frag = MovieDetailFragment.newInstance(movie);
+        this.mMovieDetailFrag = MovieDetailFragment.newInstance(movie);
+
+        SharedPreferences prefs = this.getSharedPreferences("com.miso.popularmovies.MainActivity", Context.MODE_PRIVATE);
+        String currentFavourites = prefs.getString("favourites", "");
+        MovieDetailFragment.selectedFavourite = (currentFavourites.contains(this.mSelectedMovie.id));
 
         if (mTwoPane) {
             getFragmentManager()
                     .beginTransaction()
-                    .replace(R.id.movie_detail_fragment, frag, "movieDetailFragment")
+                    .replace(R.id.movie_detail_fragment, this.mMovieDetailFrag, "movieDetailFragment")
                     .commit();
         }else {
             getFragmentManager()
                     .beginTransaction()
-                    .replace(R.id.main, frag, "movieDetailFragment")
+                    .replace(R.id.main, this.mMovieDetailFrag, "movieDetailFragment")
                     .addToBackStack(null)
                     .commit();
         }
@@ -118,6 +123,11 @@ public class MainActivity extends ActionBarActivity implements MovieDetailFragme
         if (!currentFavourites.contains(this.mSelectedMovie.id)){
             currentFavourites += ",,," + this.mSelectedMovie.id;
             prefs.edit().putString("favourites", currentFavourites).apply();
+            this.mMovieDetailFrag.addToFavouriteButtonTriggered(view);
+        } else {
+            currentFavourites = currentFavourites.replace(",,," + this.mSelectedMovie.id, "");
+            prefs.edit().putString("favourites", currentFavourites).apply();
+            this.mMovieDetailFrag.removeToFavouriteButtonTriggered(view);
         }
     }
 

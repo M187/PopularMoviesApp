@@ -6,7 +6,7 @@
     <string name="most_popular">Most popular movies</string>
     <string name="my_favourites">My favourites movies</string>
 
-    <string name="MoviedbApiCode">***REMOVED***</string>
+    <string name="MoviedbApiCode"></string>
 
 <!-- TODO: Remove or change this placeholder text -->
     <string name="hello_blank_fragment">Hello blank fragment</string>
